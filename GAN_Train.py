@@ -121,7 +121,7 @@ class Perceptual(object):
         # self.sess = sess
         # self.flags = flags
 
-        self.vgg_path = 'Real-time-style-transfer-master/Data/imagenet-vgg-verydeep-19.mat'
+        self.vgg_path = 'imagenet-vgg-verydeep-19.mat'
 
         # # Not too bad original backup
         # self.content_weight = 7.5  # used in style transfer. Consider playing with it
@@ -268,7 +268,7 @@ def percept_loss_func(y_true, y_pred):
 # <<< # <<< # <<< # <<< # <<< # <<< # <<<
 
 ###Clip/normalize input data###
-dataset = x_train, y_train
+dataset = x_train_aug, y_train_aug
 
 number_filters = 64
 N_Epochs = 400
@@ -366,7 +366,7 @@ def define_gan(g_model, d_model, image_shape):
 
 def generate_real_samples(dataset, n_samples, patch_shape):
     trainA, trainB = dataset
-    ix = randint(0, x_train.shape[0], n_samples)
+    ix = randint(0, x_train_aug.shape[0], n_samples)
     X1, X2 = trainA[ix], trainB[ix]
     y = ones((n_samples, patch_shape, patch_shape, 1))
     return [X1, X2], y
