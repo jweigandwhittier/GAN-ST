@@ -1,4 +1,5 @@
 # molecular-MRI-GAN
+The purpose of this code is to train a GAN for CEST and MT parameter mapping. 
 
 ## Requirements
 
