@@ -1,0 +1,11 @@
+.idea/
+__pycache__/
+checkpoints/
+temp/
+examples/temp
+examples/test
+examples/results
+logs/
+checkpoints_original/
+checkpoints_v2/
+github_img/
