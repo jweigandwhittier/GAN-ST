@@ -2,7 +2,6 @@
 """
 Created on Thu Oct 14 13:01:04 2021
 
-@author: Bonewheel
 """
 
 import os
@@ -21,11 +20,10 @@ model = load_model('mmri-gan_model.h5')
 
 start_time = time.time()
 predicted_output = model.predict(x_train)
-print("--- %s seconds ---" % (time.time() - start_time))
-#Example phantom (without augmentation) is loaded here for demonstration purposes
-#because the network was trained on this phantom, results will not be represenative.
+print("--- Inference took: %s seconds ---" % (time.time() - start_time))
+#Example phantom (without augmentation) is loaded here for demonstration purposes. Because the network was trained on this phantom, results will not be represenative.
 
-###Reshape and normalize###
+###Reshape and un-normalize###
 def un_normalize_range_y(normalized_array, original_min, original_max, new_min, new_max):
     a = original_min
     b = original_max
@@ -36,21 +34,32 @@ def un_normalize_range_y(normalized_array, original_min, original_max, new_min, 
 y_predict = np.reshape(predicted_output, (1, 128, 128, 2))
 y_real = np.reshape(y_train, (1, 128, 128, 2))
 
-y_predict_mmol = y_predict[:, :, :, 0]
-y_predict_hz = y_predict[:, :, :, 1]
+y_predict_mmol = y_predict[:, :, :, 0] # Extract concentration data from output
+y_predict_hz = y_predict[:, :, :, 1] # Extract exchange rate data from output
 y_real_mmol = y_real[:, :, :, 0]
 y_real_hz = y_real[:, :, :, 1]
 
+###For CEST-MRF-based model (ksw and concentration)###
 y_real_mmol = un_normalize_range_y(y_real_mmol, original_min=10, original_max=120, new_min=0, new_max=1)
 y_real_hz = un_normalize_range_y(y_real_hz, original_min=100, original_max=1400, new_min=0, new_max=1)
 
 y_predict_mmol = un_normalize_range_y(y_predict_mmol, original_min=10, original_max=120, new_min=0, new_max=1)
 y_predict_hz = un_normalize_range_y(y_predict_hz, original_min=100, original_max=1400, new_min=0, new_max=1)
 
-y_real = np.stack((y_real_mmol, y_real_hz), axis = 3)
+y_real = np.stack((y_real_mmol, y_real_hz), axis = 3) # Re-stack arrays after normalization
 y_predict = np.stack((y_predict_mmol, y_predict_hz), axis = 3)
 
-for slice_ind in range(np.size(y_predict, 0)):
+###For model trained on measured parameters (pH and contentration)###
+# y_real_mmol = un_normalize_range_y(y_real_mmol, original_min=10, original_max=120, new_min=0, new_max=1)
+# y_real_ph = un_normalize_range_y(y_real_hz, original_min=0, original_max=7, new_min=0, new_max=1)
+#
+# y_predict_mmol = un_normalize_range_y(y_predict_mmol, original_min=10, original_max=120, new_min=0, new_max=1)
+# y_predict_ph = un_normalize_range_y(y_predict_hz, original_min=0, original_max=7, new_min=0, new_max=1)
+
+# y_real = np.stack((y_real_mmol, y_real_ph), axis = 3) # Re-stack arrays after normalization
+# y_predict = np.stack((y_predict_mmol, y_predict_ph), axis = 3)
+
+for slice_ind in range(np.size(y_predict, 0)): # Plot predicted data
      fig, axs = plt.subplots(2, 2, constrained_layout=False)
      fig.suptitle('Slice %i' %slice_ind)
      axs[0, 0].set_title('[L-arg] (mM)')
@@ -69,4 +78,3 @@ for slice_ind in range(np.size(y_predict, 0)):
 
      plt.show()
 
-print("--- %s seconds ---" % (time.time() - start_time))

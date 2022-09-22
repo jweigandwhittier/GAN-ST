@@ -33,10 +33,9 @@ from keras.layers import Dropout
 from keras.layers import BatchNormalization
 from keras.layers import MaxPooling2D
 from keras.utils.vis_utils import plot_model
-from matplotlib import pyplot
 from tensorflow.python.client import device_lib
 import os
-#from numba import cuda #May be necessary for training on Windows computers
+# from numba import cuda # May be necessary for training on Windows computers
 
 ###Import augmented datasets from GAN_Data.py###
 from GAN_Data import x_train_aug, y_train_aug
@@ -58,13 +57,9 @@ class VGG19(object):
         self.mean_pixel = np.asarray([123.68, 116.779, 103.939])
         self.layers = (
             'conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1',
-
             'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
-
             'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'conv3_4', 'relu3_4', 'pool3',
-
             'conv4_1', 'relu4_1', 'conv4_2', 'relu4_2', 'conv4_3', 'relu4_3', 'conv4_4', 'relu4_4', 'pool4',
-
             'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3', 'conv5_4', 'relu5_4'
         )
 
@@ -80,9 +75,6 @@ class VGG19(object):
 
                 if kind == 'conv':
                     kernels, bias = self.weights[i][0][0][0][0]
-
-                    # matconvent: weights are [width, height, in_channels, out_channels]
-                    # tensorflow: weights are [height, width, in_channels, out_channels]
 
                     kernels = np.transpose(kernels, (1, 0, 2, 3))
                     bias = bias.reshape(-1)
@@ -118,27 +110,21 @@ class VGG19(object):
 
 class Perceptual(object):
     def __init__(self, y_true, y_pred, batch_size):
-        # self.sess = sess
-        # self.flags = flags
 
         self.vgg_path = 'imagenet-vgg-verydeep-19.mat'
 
-        # # Not too bad original backup
+        #Not too bad, original backup
         # self.content_weight = 7.5  # used in style transfer. Consider playing with it
         # self.tv_weight = 200  # used in style transfer. Consider playing with it
         # self.l1_weight = 100  # OP added it. Consider making much smaller or increasing content weight
 
-        self.content_weight = 0.1  # used in style transfer. Consider playing with it
-        self.tv_weight = 1.0  # used in style transfer. Consider playing with it
+        self.content_weight = 0.1  # Used in style transfer. Consider playing with it
+        self.tv_weight = 1.0  # Used in style transfer. Consider playing with it
         self.l1_weight = 1.0  # OP added it. Consider making much smaller or increasing content weight
 
         self.batch_size = batch_size  # Make sure it matches Jonah's code part batch size!!!
 
-        print('Make sure it matches Jonahs code part batch size !!!!')
-
         self.content_shape = [None, 256, 256, 3]
-
-        # self.content_layer = 'relu4_2' # in the modified version in this git
 
         self.content_layer = 'relu2_2'  # original paper
         self.content_loss, self.tv_loss, self.l1_loss = None, None, None
@@ -191,7 +177,7 @@ class Perceptual(object):
         self.l1_loss = self.l1_weight * mae(preds, content_img_ph)
 
     def content_loss_func(self, preds_dict, content_target_feature):
-        # calucate content size and check the feature dimension between content and predicted image
+        # Calculate content size and check the feature dimension between content and predicted image
         content_size = self._tensor_size(content_target_feature[self.content_layer]) * self.batch_size
 
         assert self._tensor_size(content_target_feature[self.content_layer]) == self._tensor_size(
@@ -201,7 +187,7 @@ class Perceptual(object):
             preds_dict[self.content_layer] - content_target_feature[self.content_layer]) / content_size)
 
     def tv_loss_func(self, preds):
-        # total variation de-noising
+        # Total variation de-noising
         tv_y_size = self._tensor_size(preds[:, 1:, :, :])
         tv_x_size = self._tensor_size(preds[:, :, 1:, :])
 
@@ -270,11 +256,11 @@ def percept_loss_func(y_true, y_pred):
 ###Clip/normalize input data###
 dataset = x_train_aug, y_train_aug
 
-number_filters = 64
-N_Epochs = 400
-Batch_Size = 1
+number_filters = 64 # Base number of CNN filters used in U-Net generator
+N_Epochs = 400 # Number of training epochs, can be modified to speed up training (400 used in manuscript)
+Batch_Size = 1 # Batch size, larger numbers can cause issues on machines with lower amounts of memory (VRAM + system RAM)
 
-###Define discriminator###
+###Define PatchGAN discriminator###
 def define_discriminator(input_shape, output_shape):
     init = RandomNormal(stddev=0.02)
     in_src_image = Input(shape=input_shape)
@@ -327,7 +313,7 @@ def decoder_block(layer_in, skip_in, n_filters, dropout=True):
     return g
 
 
-###Define generator###
+###Define U-Net generator###
 def define_generator(image_shape):
     init = RandomNormal(stddev=0.02)
     in_image = Input(shape=image_shape)
@@ -360,8 +346,8 @@ def define_gan(g_model, d_model, image_shape):
     dis_out = d_model([in_src, gen_out])
     model = Model(in_src, [dis_out, gen_out])
     opt = Adam(lr=0.0001, beta_1=0.5)
-    #model.compile(loss = ['binary_crossentropy', 'mae'], optimizer = opt, loss_weights = [1,100]) #For training using MAE loss
-    model.compile(loss=['binary_crossentropy', percept_loss_func], optimizer=opt, loss_weights=[1, 100]) #For training using perceptual loss
+    #model.compile(loss = ['binary_crossentropy', 'mae'], optimizer = opt, loss_weights = [1,100]) # For training using MAE loss
+    model.compile(loss=['binary_crossentropy', percept_loss_func], optimizer=opt, loss_weights=[1, 100]) # For training using perceptual loss
     return model
 
 def generate_real_samples(dataset, n_samples, patch_shape):
@@ -382,6 +368,7 @@ def generate_fake_samples(g_model, samples, patch_shape):
     y = zeros((len(X), patch_shape, patch_shape, 1))
     return X, y
 
+###Save GAN model###
 def summarize_performance(step, g_model):
     filename2 = 'mmri-gan_model.h5'
     g_model.save(filename2)
@@ -401,7 +388,7 @@ def train(d_model, g_model, gan_model, dataset, n_epochs=N_Epochs, n_batch=Batch
         g_loss, _, _ = gan_model.train_on_batch(X_realA, [y_real, X_realB])
         print('>%d, d1[%.3f] d2[%.3f] g[%.3f]' % (i + 1, d_loss1, d_loss2, g_loss))
 
-        if (i + 1) % (bat_per_epo * 400) == 0:
+        if (i + 1) % (bat_per_epo * 400) == 0: # Can be modified to save model more often (i.e. every 10 or 100 epochs)
             summarize_performance(i, g_model)
 
 print('Loaded', dataset[0].shape, dataset[1].shape)
@@ -423,6 +410,3 @@ gan_model.summary()
 train(d_model, g_model, gan_model, dataset)
 
 plot_model(model, to_file='generator_model_plot.png', show_shapes=True, show_layer_names=True)
-
-# cuda.select_device(0)
-# cuda.close()

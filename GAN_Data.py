@@ -1,3 +1,8 @@
+"""
+Created on Thu Oct 14 13:01:04 2021
+
+"""
+
 import numpy as np
 
 ###Import input data, concatenate ground truth outputs###
