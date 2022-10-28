@@ -24,8 +24,11 @@ The purpose of this code is to train a GAN for CEST and MT parameter mapping.
   * A single L-arginine phantom slice is included as a demonstration for both training and inference. The network expects sets of 9 128x128 L2 normalized MRF image per slice as input, and sets of 2 128x128 linearly scaled CEST maps (concentration and chemical exchange rate) as output. 
 
 ## Citations 
-Simonyan Karen, Zisserman Andrew. Very deep convolutional networks for large-scale image recognition arXiv preprint arXiv:1409.1556. 2014.
+1. Simonyan Karen, Zisserman Andrew. Very deep convolutional networks for large-scale image recognition arXiv preprint arXiv:1409.1556. 2014.
 
-Isola Phillip, Zhu Jun-Yan, Zhou Tinghui, Efros Alexei A. Image-to-image translation with conditional adversarial networks in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition:1125–1134 2017.
+2. Isola Phillip, Zhu Jun-Yan, Zhou Tinghui, Efros Alexei A. Image-to-image translation with conditional adversarial networks in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition:1125–1134 2017.
 
-Jason Brownlee, How to Implement Pix2Pix GAN Models From Scratch With Keras, Machine Learning Mastery, Available from https://machinelearningmastery.com/how-to-implement-pix2pix-gan-models-from-scratch-with-keras/, Accessed October 14, 2021.
+3. Jason Brownlee, How to Implement Pix2Pix GAN Models From Scratch With Keras, Machine Learning Mastery, Available from https://machinelearningmastery.com/how-to-implement-pix2pix-gan-models-from-scratch-with-keras/, Accessed October 14, 2021.
+
+##This repository is associated with the paper:
+[Accelerated and Quantitative 3D Semisolid MT/CEST Imaging using a Generative Adversarial Network](https://arxiv.org/abs/2207.11297)
