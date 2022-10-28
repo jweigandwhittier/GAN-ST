@@ -30,5 +30,5 @@ The purpose of this code is to train a GAN for CEST and MT parameter mapping.
 
 3. Jason Brownlee, How to Implement Pix2Pix GAN Models From Scratch With Keras, Machine Learning Mastery, Available from https://machinelearningmastery.com/how-to-implement-pix2pix-gan-models-from-scratch-with-keras/, Accessed October 14, 2021.
 
-##This repository is associated with the paper:
+## This repository is associated with the paper
 [Accelerated and Quantitative 3D Semisolid MT/CEST Imaging using a Generative Adversarial Network](https://arxiv.org/abs/2207.11297)
