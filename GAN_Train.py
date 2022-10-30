@@ -8,7 +8,7 @@ Created on Tue May 31 09:29:22 2022
 # Available from https://machinelearningmastery.com/how-to-implement-pix2pix-gan-models-from-scratch-with-keras/
 # Accessed October 14, 2021
 
-#Perceptual loss function adapted by Or Perlman
+#Perceptual loss function was based (and modified) from: Johnson, Justin, Alexandre Alahi, and Li Fei-Fei. "Perceptual losses for real-time style transfer and super-resolution." European conference on computer vision. Springer, Cham, 2016; and Cheng-Bin Jin, Real-Time Style Transfer, 2018, https://github.com/ChengBinJin/Real-time-style-transfer/.
 
 ###Import packages###
 import numpy as np
@@ -112,15 +112,9 @@ class Perceptual(object):
     def __init__(self, y_true, y_pred, batch_size):
 
         self.vgg_path = 'imagenet-vgg-verydeep-19.mat'
-
-        #Not too bad, original backup
-        # self.content_weight = 7.5  # used in style transfer. Consider playing with it
-        # self.tv_weight = 200  # used in style transfer. Consider playing with it
-        # self.l1_weight = 100  # OP added it. Consider making much smaller or increasing content weight
-
-        self.content_weight = 0.1  # Used in style transfer. Consider playing with it
-        self.tv_weight = 1.0  # Used in style transfer. Consider playing with it
-        self.l1_weight = 1.0  # OP added it. Consider making much smaller or increasing content weight
+        self.content_weight = 0.1  # Used in style transfer. 
+        self.tv_weight = 1.0  # Used in style transfer. 
+        self.l1_weight = 1.0  # added 
 
         self.batch_size = batch_size  # Make sure it matches Jonah's code part batch size!!!
 
@@ -139,23 +133,12 @@ class Perceptual(object):
 
         self.vgg = VGG19(self.vgg_path)
 
-        # # step 1: extract style_target feature
-        # vgg_dic = self.vgg(self.style_img_ph)
-        # for layer in self.style_layers:
-        #     features = self.sess.run(vgg_dic[layer], feed_dict={self.style_img_ph: self.style_target})
-        #     features = np.reshape(features, (-1, features.shape[3]))
-        #     gram = np.matmul(features.T, features) / features.size
-        #     self.style_target_gram[layer] = gram
-
-        # step 2: extract content_target feature
+        # step 1: extract content_target feature
         content_target_feature = {}
         vgg_content_dic = self.vgg(self.content_img_ph, is_reuse=True)
         content_target_feature[self.content_layer] = vgg_content_dic[self.content_layer]
 
-        # step 3: tranfer content image to predicted image
-        # self.preds = self.transfer(self.content_img_ph / 255.0)
-
-        # step 4: extract vgg feature of the predicted image
+        # step 2: extract vgg feature of the predicted image
         preds_dict = self.vgg(self.preds, is_reuse=True)
         # self.sample_pred = self.transfer(self.sample_img_ph/255.0, is_reuse=True)
 
