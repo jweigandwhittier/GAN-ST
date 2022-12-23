@@ -23,7 +23,7 @@ The purpose of this code is to train a GAN for accelerating CEST and MT quantita
 * Image files for training
   * A single L-arginine phantom slice is included as a demonstration for both training and inference. The network expects sets of 9 128x128 L2 normalized MRF image per slice as input, and sets of 2 128x128 linearly scaled CEST maps (concentration and chemical exchange rate) as output. 
   
-* Trained netowrks can be found at: https://figshare.com/s/c91bf3f02e91f91edaf9
+* Trained networks can be found at: https://figshare.com/s/c91bf3f02e91f91edaf9
 
 ## Citations 
 1. Simonyan Karen, Zisserman Andrew. Very deep convolutional networks for large-scale image recognition arXiv preprint arXiv:1409.1556. 2014.
