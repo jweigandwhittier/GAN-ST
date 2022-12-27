@@ -37,5 +37,5 @@ The purpose of this code is to train a GAN for accelerating CEST and MT quantita
 5. Cheng-Bin Jin, Real-Time Style Transfer, 2018, https://github.com/ChengBinJin/Real-time-style-transfer/
 
 ## This repository is associated with the paper
-Weigand‐Whittier J, Sedykh M, Herz K, et al. Accelerated and quantitative three‐dimensional molecular MRI using a generative adversarial network. Magn Reson Med. 2022;1‐13. doi:10.1002/mrm.29574
+Weigand‐Whittier J, Sedykh M, Herz K, et al. Accelerated and quantitative three‐dimensional molecular MRI using a generative adversarial network. Magn Reson Med. 2022;1‐13. [doi:10.1002/mrm.29574](https://doi.org/10.1002/mrm.29574).
 
